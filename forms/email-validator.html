@@ -1,0 +1,35 @@
+<script>
+    function validarEmail(email) {
+        // Regex simples e eficaz para e-mails comuns
+        const regex = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+        return regex.test(email);
+    }
+
+    document.addEventListener("DOMContentLoaded", function () {
+        const inputEmail = document.getElementById('email');
+
+        if (inputEmail) {
+            inputEmail.addEventListener('input', function () {
+                const valido = validarEmail(this.value);
+                inputEmail.style.borderColor = valido ? 'green' : 'red';
+            });
+        }
+
+        // Unbounce Validator para e-mail
+        window.ub = window.ub || {};
+        window.ub.form = window.ub.form || {};
+        window.ub.form.customValidators = window.ub.form.customValidators || {};
+        window.ub.form.validationRules = window.ub.form.validationRules || {};
+
+        window.ub.form.customValidators.email_validation = {
+            isValid: function (value) {
+                return validarEmail(value);
+            },
+            message: 'Digite um e-mail válido (ex: nome@dominio.com).',
+        };
+
+        window.ub.form.validationRules.email = {
+            email_validation: true
+        };
+    });
+</script>

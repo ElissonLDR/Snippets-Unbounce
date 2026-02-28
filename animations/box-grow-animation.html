@@ -1,0 +1,34 @@
+<script>
+    function animateSequentially() {
+        let elements = document.querySelectorAll(".animate-sequence");
+    
+        let observer = new IntersectionObserver(entries => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    elements.forEach((element, index) => {
+                        setTimeout(() => {
+                            element.style.transform = "scale(1.1)";
+                            element.style.boxShadow = "0px 10px 20px rgba(0, 0, 0, 0.3)"; // Adiciona sombra
+                            
+                            setTimeout(() => {
+                                element.style.transform = "scale(1)";
+                                element.style.boxShadow = "none"; // Remove sombra
+                            }, 500);
+                        }, index * 600);
+                    });
+    
+                    observer.unobserve(entry.target); // Para não repetir a animação
+                }
+            });
+        }, { threshold: 0.5 });
+    
+        elements.forEach(element => {
+            element.style.transition = "transform 0.5s ease-in-out, box-shadow 0.5s ease-in-out"; 
+            observer.observe(element);
+        });
+    }
+    
+    // Ativa a função quando a página carregar
+    document.addEventListener("DOMContentLoaded", animateSequentially);
+    
+    </script>

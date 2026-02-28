@@ -1,0 +1,26 @@
+<script>
+    function capitalizarNome(texto) {
+        return texto
+            .toLowerCase()
+            .replace(/\b\w/g, function(letra) {
+                return letra.toUpperCase();
+            });
+    }
+
+    document.addEventListener("DOMContentLoaded", function () {
+        const inputNome = document.getElementById('nome');
+        const inputArea = document.getElementById('área_de_atuação');
+
+        if (inputNome) {
+            inputNome.addEventListener('blur', function () {
+                this.value = capitalizarNome(this.value);
+            });
+        }
+
+        if (inputArea) {
+            inputArea.addEventListener('blur', function () {
+                this.value = capitalizarNome(this.value);
+            });
+        }
+    });
+</script>

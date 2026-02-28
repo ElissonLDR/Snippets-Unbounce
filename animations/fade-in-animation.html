@@ -1,0 +1,36 @@
+<script>
+    function animateOnScroll() {
+        let elements = document.querySelectorAll(".from-left, .from-right, .from-top");
+    
+        let observer = new IntersectionObserver(entries => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = 1;
+                    entry.target.style.transform = "translateX(0)";
+                    entry.target.style.transform = "translateY(0)";
+                    observer.unobserve(entry.target); // Para não repetir a animação
+                }
+            });
+        }, { threshold: 0.5 }); // 50% do elemento visível ativa o efeito
+    
+        elements.forEach(element => {
+            if (element.classList.contains("from-left")) {
+                element.style.opacity = 0;
+                element.style.transform = "translateX(-100px)";
+            } else if (element.classList.contains("from-right")) {
+                element.style.opacity = 0;
+                element.style.transform = "translateX(100px)";
+            } else if (element.classList.contains("from-top")) {
+                element.style.opacity = 0;
+                element.style.transform = "translateY(-100px)";
+            }
+    
+            element.style.transition = "opacity 0.8s ease-out, transform 0.8s ease-out";
+            observer.observe(element);
+        });
+    }
+    
+    // Ativa a função quando a página carregar
+    document.addEventListener("DOMContentLoaded", animateOnScroll);
+    </script>
+    

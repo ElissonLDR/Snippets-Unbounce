@@ -1,0 +1,59 @@
+<!-- exemplo LP B4 -->
+EFEITO FORM CLICK
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        // Detecta todos os botões (button, a, ou qualquer outro botão)
+        const buttons = document.querySelectorAll('button, a, input[type="button"], input[type="submit"]');
+        const formSection = document.getElementById('lp-pom-block-740');
+        const msgForm = document.querySelector('.lp-pom-form');
+        const nomeInput = document.getElementById('nome'); // O campo de input com id "nome"
+
+        buttons.forEach(button => {
+            button.addEventListener('click', (e) => {
+                // Verifica se o botão clicado NÃO está dentro da div .lp-pom-form
+                if (!button.closest('.lp-pom-form')) {
+                    // Previne a navegação padrão (caso haja link ou formulário no botão)
+                    e.preventDefault();
+
+                    // Rola suavemente até a seção com o formulário
+                    formSection.scrollIntoView({ behavior: 'smooth' });
+
+                    // Aguarda a rolagem e aplica o efeito de zoom na mensagem
+                    setTimeout(() => {
+                        if (msgForm) {
+                            msgForm.classList.add('efeito'); // Aplica o zoom
+                        }
+                    }, 500); // Espera a rolagem ocorrer por 0.5 segundos antes de aplicar o zoom
+
+                    // Seleciona o campo "nome" para digitar
+                    if (nomeInput) {
+                        nomeInput.focus(); // Coloca o foco no campo "nome"
+                    }
+                }
+            });
+        });
+    });
+</script>
+
+
+<!-- CSS -->
+EFEITO CLICK FORM
+<style>
+    .efeito{  
+    animation: pulse 1s ease;
+  }
+    
+    @keyframes pulse {
+      0% {
+          transform: scale(0.95);
+      }
+      
+      70% {
+          transform: scale(1.1);
+      }
+      
+      100% {
+          transform: scale(1);
+      }
+  }
+  </style>

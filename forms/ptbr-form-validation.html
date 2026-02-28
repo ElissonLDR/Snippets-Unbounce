@@ -1,0 +1,131 @@
+
+
+VALIDAÇÃO PT-BR FORM
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const formulario = document.querySelector('form');
+        const requiredFields = formulario.querySelectorAll('input[required], select[required], textarea[required]'); // Seleciona todos os campos obrigatórios
+
+        const requiredMessage = 'Este campo é obrigatório!';
+
+        // Adicionar validação para todos os campos obrigatórios
+        requiredFields.forEach(inputField => {
+            inputField.addEventListener('input', function () {
+                inputField.setCustomValidity(''); // Limpa mensagens antigas
+            });
+
+            inputField.addEventListener('invalid', function () {
+                if (inputField.validity.valueMissing) {
+                    inputField.setCustomValidity(requiredMessage);
+                }
+            });
+        });
+
+        // Validação ao enviar o formulário
+        formulario.addEventListener('submit', function (event) {
+            requiredFields.forEach(inputField => {
+                if (!inputField.validity.valid) {
+                    event.preventDefault(); // Impede o envio se houver erros
+                }
+            });
+        });
+    });
+
+    // Validação personalizada para telefone
+    document.addEventListener('DOMContentLoaded', () => {
+        const telefoneField = document.getElementById('telefone'); // Substitua pelo ID real do campo de telefone
+        if (telefoneField) {
+            telefoneField.addEventListener('input', () => {
+                let telefoneValue = telefoneField.value;
+
+                // Remover caracteres não numéricos
+                telefoneValue = telefoneValue.replace(/\D/g, '');
+
+                // Adicionar DDD (dois primeiros números)
+                if (telefoneValue.length > 2) {
+                    telefoneValue = `(${telefoneValue.slice(0, 2)}) ${telefoneValue.slice(2)}`;
+                }
+
+                telefoneField.value = telefoneValue; // Atualiza o campo com a formatação
+
+                telefoneField.setCustomValidity(''); // Limpa mensagens personalizadas
+                if (!telefoneField.checkValidity()) {
+                    telefoneField.setCustomValidity('Por favor, insira um número de telefone válido');
+                }
+            });
+
+            telefoneField.addEventListener('invalid', () => {
+                if (telefoneField.validity.patternMismatch || telefoneField.validity.typeMismatch) {
+                    telefoneField.setCustomValidity('Por favor, insira um número de telefone válido');
+                }
+            });
+        }
+
+        // Validação personalizada para e-mail
+        const emailField = document.getElementById('email_comercial'); // Substitua pelo ID real do campo de e-mail
+        if (emailField) {
+            emailField.addEventListener('input', () => {
+                emailField.setCustomValidity(''); // Limpa mensagens personalizadas
+                if (!emailField.checkValidity()) {
+                    emailField.setCustomValidity('Por favor, insira um endereço de e-mail válido');
+                }
+            });
+
+            emailField.addEventListener('invalid', () => {
+                if (emailField.validity.typeMismatch) {
+                    emailField.setCustomValidity('Por favor, insira um endereço de e-mail válido');
+                }
+            });
+        }
+    });
+</script>
+
+
+
+
+<!-- OPÇÃO 2 -->
+<script>
+    const fields = ['nome', 'telefone', 'email_comercial', 'cnpj', 'nome_da_instituição'];
+    const requiredMessage = 'Este campo é obrigatório!';
+
+    // Aplica a mensagem genérica a todos os campos obrigatórios
+    fields.forEach(field => {
+        window.ub.form.validationMessages[field].required = requiredMessage;
+    });
+
+    // Validação personalizada para telefone
+    document.addEventListener('DOMContentLoaded', () => {
+        const telefoneField = document.getElementById('telefone'); // Substitua pelo ID real do campo de telefone
+        if (telefoneField) {
+            telefoneField.addEventListener('input', () => {
+                telefoneField.setCustomValidity(''); // Limpa mensagens personalizadas
+                if (!telefoneField.checkValidity()) {
+                    telefoneField.setCustomValidity('Por favor, insira um número de telefone válido');
+                }
+            });
+
+            telefoneField.addEventListener('invalid', () => {
+                if (telefoneField.validity.patternMismatch || telefoneField.validity.typeMismatch) {
+                    telefoneField.setCustomValidity('Por favor, insira um número de telefone válido');
+                }
+            });
+        }
+
+        // Validação personalizada para e-mail
+        const emailField = document.getElementById('email_comercial'); // Substitua pelo ID real do campo de e-mail
+        if (emailField) {
+            emailField.addEventListener('input', () => {
+                emailField.setCustomValidity(''); // Limpa mensagens personalizadas
+                if (!emailField.checkValidity()) {
+                    emailField.setCustomValidity('Por favor, insira um endereço de e-mail válido');
+                }
+            });
+
+            emailField.addEventListener('invalid', () => {
+                if (emailField.validity.typeMismatch) {
+                    emailField.setCustomValidity('Por favor, insira um endereço de e-mail válido');
+                }
+            });
+        }
+    });
+</script>

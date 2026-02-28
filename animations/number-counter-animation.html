@@ -1,0 +1,42 @@
+<script>
+    function animateNumber(element, start, end, duration) {
+        let startTime = null;
+    
+        function updateNumber(currentTime) {
+            if (!startTime) startTime = currentTime;
+            let elapsedTime = currentTime - startTime;
+            let progress = Math.min(elapsedTime / duration, 1);
+            let currentNumber = Math.floor(progress * (end - start) + start);
+    
+            element.textContent = currentNumber;
+    
+            if (progress < 1) {
+                requestAnimationFrame(updateNumber);
+            }
+        }
+    
+        requestAnimationFrame(updateNumber);
+    }
+    
+    // Observador para detectar quando as divs entram na tela
+    function observeNumberAnimations() {
+        let counters = document.querySelectorAll(".counter");
+    
+        let observer = new IntersectionObserver(entries => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    let endValue = parseInt(entry.target.textContent.trim(), 10);
+                    if (!isNaN(endValue)) {
+                        animateNumber(entry.target, 1, endValue, 2000);
+                        observer.unobserve(entry.target); // Para não repetir a animação
+                    }
+                }
+            });
+        }, { threshold: 0.5 }); // 50% do elemento precisa estar visível
+    
+        counters.forEach(counter => observer.observe(counter));
+    }
+    
+    // Inicia a observação quando a página carregar
+    document.addEventListener("DOMContentLoaded", observeNumberAnimations);
+    </script>

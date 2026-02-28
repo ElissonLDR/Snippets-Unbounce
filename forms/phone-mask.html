@@ -1,0 +1,87 @@
+<script>
+    function aplicarMascaraTelefone(telefone) {
+        telefone = telefone.replace(/[^\d]/g, '');
+        if (telefone.length > 11) {
+            telefone = telefone.slice(0, 11);
+        }
+
+        // Formato celular: (XX) 9 XXXX-XXXX
+        if (telefone.length === 11) {
+            return telefone.replace(/^(\d{2})(\d{1})(\d{4})(\d{4})$/, "($1) $2 $3-$4");
+        }
+        // Formato fixo: (XX) XXXX-XXXX
+        else if (telefone.length === 10) {
+            return telefone.replace(/^(\d{2})(\d{4})(\d{4})$/, "($1) $2-$3");
+        }
+        // Enquanto digita (mais de 6 dígitos)
+        else if (telefone.length > 6) {
+            return telefone.replace(/^(\d{2})(\d{0,5})(\d{0,4})$/, "($1) $2-$3");
+        }
+        // Enquanto digita (mais de 2 dígitos)
+        else if (telefone.length > 2) {
+            return telefone.replace(/^(\d{2})(\d{0,5})$/, "($1) $2");
+        }
+        // Apenas DDD ou menos
+        else {
+            return telefone;
+        }
+    }
+
+    function validarTelefone(telefone) {
+        const somenteNumeros = telefone.replace(/[^\d]/g, '');
+        if (!(somenteNumeros.length === 10 || somenteNumeros.length === 11)) {
+            return false;
+        }
+        // Bloqueia apenas números com todos os dígitos repetidos
+        if (/^(\d)\1{9,}$/.test(somenteNumeros)) {
+            return false;
+        }
+        return true;
+    }
+
+    document.addEventListener("DOMContentLoaded", function () {
+        const inputTelefone = document.getElementById('telefone');
+
+        inputTelefone.addEventListener('input', function () {
+            this.value = aplicarMascaraTelefone(this.value);
+            
+            // Corrigido: validar com base no número limpo
+            const numeroLimpo = this.value.replace(/[^\d]/g, '');
+            const resultado = validarTelefone(numeroLimpo);
+            inputTelefone.style.borderColor = resultado ? 'green' : 'red';
+        });
+
+        const form = inputTelefone.closest('form');
+        if (form) {
+            form.addEventListener('submit', function (event) {
+                const numeroLimpo = inputTelefone.value.replace(/[^\d]/g, '');
+                const resultado = validarTelefone(numeroLimpo);
+                if (!resultado) {
+                    event.preventDefault();
+                    inputTelefone.style.borderColor = 'red';
+                    alert('Número de telefone inválido! Deve conter DDD + número fixo (8 dígitos) ou celular (9 dígitos).');
+                } else {
+                    inputTelefone.style.borderColor = 'green';
+                }
+            });
+        }
+
+        // Unbounce Validator
+        window.ub = window.ub || {};
+        window.ub.form = window.ub.form || {};
+        window.ub.form.customValidators = window.ub.form.customValidators || {};
+        window.ub.form.validationRules = window.ub.form.validationRules || {};
+
+        window.ub.form.customValidators.telefone_validation = {
+            isValid: function (value) {
+                const telefoneLimpo = value.replace(/[^\d]/g, '');
+                return validarTelefone(telefoneLimpo);
+            },
+            message: 'Número inválido. Use DDD + telefone fixo ou celular.',
+        };
+
+        window.ub.form.validationRules.telefone = {
+            telefone_validation: true
+        };
+    });
+</script>

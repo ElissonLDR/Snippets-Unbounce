@@ -1,0 +1,41 @@
+<script>
+    function typeWriterEffect(element, speed = 10) {
+      const text = element.getAttribute("data-text"); // Obtém o texto original da div
+      element.textContent = "";
+      let index = 0;
+  
+      function type() {
+          if (index < text.length) {
+              element.textContent += text.charAt(index);
+              index++;
+              setTimeout(type, speed);
+          }
+      }
+  
+      type();
+  }
+  
+  // Observador para iniciar a animação quando a div entrar na tela
+  function observeTypeWriter() {
+      let elements = document.querySelectorAll(".typewriter");
+  
+      let observer = new IntersectionObserver(entries => {
+          entries.forEach(entry => {
+              if (entry.isIntersecting) {
+                  typeWriterEffect(entry.target, 50);
+                  observer.unobserve(entry.target); // Para não repetir a animação
+              }
+          });
+      }, { threshold: 0.5 }); // 50% visível na tela
+  
+      elements.forEach(element => {
+          element.setAttribute("data-text", element.textContent.trim()); // Salva o texto original
+          element.textContent = ""; // Esvazia o conteúdo antes da animação
+          observer.observe(element);
+      });
+  }
+  
+  // Ativa a função quando a página carregar
+  document.addEventListener("DOMContentLoaded", observeTypeWriter);
+  
+  </script>

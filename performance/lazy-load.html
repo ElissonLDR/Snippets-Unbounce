@@ -1,0 +1,15 @@
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const imagens = document.querySelectorAll("img");
+
+        imagens.forEach((img) => {
+            // Adiciona o atributo loading=lazy se ainda não existir
+            if (!img.hasAttribute("loading")) {
+                img.setAttribute("loading", "lazy");
+            }
+
+            // Log para depuração
+            console.log("Imagem atualizada com lazy loading:", img.src);
+        });
+    });
+</script>

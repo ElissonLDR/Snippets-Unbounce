@@ -1,0 +1,216 @@
+<style>
+    .carousel-container {
+        position: relative;
+        width: 100%;
+        max-width: 100%;
+        overflow: hidden;
+      display: flex;
+      height: 100%;
+      border-radius: 25px;
+    }
+
+    .carousel {
+        display: flex;
+        transition: transform 0.4s ease-in-out;
+        gap: 10px;
+        cursor: grab;
+        max-width: 99%;
+    }
+
+    .carousel img {
+        border-radius: 25px;
+        flex: 0 auto;
+        user-select: none;
+    }
+
+    .button {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        background: rgb(58 27 4 / 70%);
+        color: white;
+        border: none;
+        cursor: pointer;
+        padding: 10px 15px;
+        border-radius: 50%;
+        transition: .2s ease;
+      z-index: 999;
+    }
+
+    .button:hover {
+        background: #000;
+    }
+
+    .prev {
+        left: 10px;
+    }
+
+    .next {
+        right: 10px;
+    }
+  .carousel-container::before {
+    right: 0;
+    left: auto;
+    z-index: 1;
+    background: linear-gradient(to left, #0005, #0000);
+}
+
+.carousel-container::after, .carousel-container::before {
+    content: '';
+    position: absolute;
+    width: 20%;
+    left: 0;
+    height: 100%;
+    background: linear-gradient(to right, #0005, #0000);
+    z-index: 0;
+}
+@media only screen and (max-width: 600px){
+  .carousel {
+        max-width: 100%;
+        gap: 0; /* remove o espaçamento */
+    }
+
+    .carousel img {
+        width: 100% !important; /* garante que a imagem ocupe toda a largura */
+        margin: 0 auto;
+    }
+
+    .carousel-container::after,
+    .carousel-container::before {
+        background: none;
+    }
+}
+
+</style>
+
+<div class="carousel-container">
+    <div class="carousel" id="carousel"></div>
+    <button class="button prev" onclick="prevSlide()">&#10094;</button>
+    <button class="button next" onclick="nextSlide()">&#10095;</button>
+</div>
+
+<script>
+    let currentIndex = 0;
+    let isDragging = false;
+    let startPosition = 0;
+    let autoplay = false;
+    let autoSlide;
+    const intervalTime = 3000;
+    const carousel = document.getElementById("carousel");
+    const imageUrls = [
+  "https://user-assets.unbounce.com/25e19b1c-0163-4b80-9392-02d9c6cea61b/ab9db261-0a28-4837-a638-5ae82f4b8689/evento-10-07.original.svg",
+  "https://user-assets.unbounce.com/25e19b1c-0163-4b80-9392-02d9c6cea61b/77c039fe-2f6b-40c3-a9f1-750495014dcc/evento-24-07.original.svg",
+  "https://user-assets.unbounce.com/25e19b1c-0163-4b80-9392-02d9c6cea61b/e87820ee-aa91-41e9-a617-f7d79f67daf4/evento-07-08.original.svg",
+  "https://user-assets.unbounce.com/25e19b1c-0163-4b80-9392-02d9c6cea61b/ec46f283-bc64-4bcc-b4d3-35d36241e20c/evento-21-08.original.svg",
+  "https://user-assets.unbounce.com/25e19b1c-0163-4b80-9392-02d9c6cea61b/ef0cd6a8-9724-43f8-9f2f-621003e11ce0/evento-04-09.original.svg",
+  "https://user-assets.unbounce.com/25e19b1c-0163-4b80-9392-02d9c6cea61b/0e7fbb8f-5519-41bd-be84-e65baf4afd5d/evento-18-09.original.svg",
+  "https://user-assets.unbounce.com/25e19b1c-0163-4b80-9392-02d9c6cea61b/ae9c0b4d-7cea-4d50-95f6-fe0e6b64bbe2/evento-02-10.original.svg",
+  "https://user-assets.unbounce.com/25e19b1c-0163-4b80-9392-02d9c6cea61b/f9bed6c8-6d5b-4d40-b582-64a57b8f3906/evento-16-10.original.svg",
+  "https://user-assets.unbounce.com/25e19b1c-0163-4b80-9392-02d9c6cea61b/50310a39-22e2-4fca-9a2a-052fd1858968/evento-30-10.original.svg",
+  "https://user-assets.unbounce.com/25e19b1c-0163-4b80-9392-02d9c6cea61b/332a5a1e-5fba-4ab4-887d-37c830087241/evento-13-11.original.svg",
+  "https://user-assets.unbounce.com/25e19b1c-0163-4b80-9392-02d9c6cea61b/4199e761-95a4-49b9-b234-15b45bb0c5e1/evento-27-11.original.svg",
+  "https://user-assets.unbounce.com/25e19b1c-0163-4b80-9392-02d9c6cea61b/60375ec4-3d75-45aa-8e12-b2645128299a/evento-11-12.original.svg"
+];
+
+    function populateCarousel() {
+        carousel.innerHTML = "";
+        imageUrls.concat(imageUrls).forEach(url => {
+            let img = document.createElement("img");
+            img.src = url;
+            img.alt = "Imagem";
+            carousel.appendChild(img);
+        });
+    }
+
+    function getImagesPerView() {
+        if (window.innerWidth >= 980) return 4;
+        if (window.innerWidth >= 600) return 3;
+        return 1;
+    }
+
+    function updateCarousel() {
+        const images = document.querySelectorAll(".carousel img");
+        const imagesPerView = getImagesPerView();
+        images.forEach(img => {
+    if (imagesPerView === 1) {
+        img.style.width = '100%';
+    } else {
+        img.style.width = `calc(${100 / imagesPerView}% - 10px)`;
+    }
+});
+
+        const offset = -currentIndex * (100 / imagesPerView);
+        carousel.style.transform = `translateX(${offset}%)`;
+    }
+
+    function nextSlide() {
+        currentIndex = (currentIndex + 1) % imageUrls.length;
+        updateCarousel();
+    }
+
+    function prevSlide() {
+        currentIndex = (currentIndex - 1 + imageUrls.length) % imageUrls.length;
+        updateCarousel();
+    }
+
+    function startAutoplay() {
+        if (autoplay) {
+            autoSlide = setInterval(nextSlide, intervalTime);
+        }
+    }
+
+    function stopAutoplay() {
+        clearInterval(autoSlide);
+    }
+
+    carousel.addEventListener("mousedown", (e) => {
+        isDragging = true;
+        startPosition = e.clientX;
+        stopAutoplay();
+    });
+
+    carousel.addEventListener("mousemove", (e) => {
+        if (!isDragging) return;
+        const moveDistance = e.clientX - startPosition;
+        if (moveDistance > 50) {
+            prevSlide();
+            isDragging = false;
+        } else if (moveDistance < -50) {
+            nextSlide();
+            isDragging = false;
+        }
+    });
+
+    carousel.addEventListener("mouseup", () => {
+        isDragging = false;
+        startAutoplay();
+    });
+
+    carousel.addEventListener("touchstart", (e) => {
+        isDragging = true;
+        startPosition = e.touches[0].clientX;
+        stopAutoplay();
+    });
+
+    carousel.addEventListener("touchmove", (e) => {
+        if (!isDragging) return;
+        const moveDistance = e.touches[0].clientX - startPosition;
+        if (moveDistance > 50) {
+            prevSlide();
+            isDragging = false;
+        } else if (moveDistance < -50) {
+            nextSlide();
+            isDragging = false;
+        }
+    });
+
+    carousel.addEventListener("touchend", () => {
+        isDragging = false;
+        startAutoplay();
+    });
+
+    window.addEventListener("resize", updateCarousel);
+    populateCarousel();
+    updateCarousel();
+    startAutoplay();
+</script>
